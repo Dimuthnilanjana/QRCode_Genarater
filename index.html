@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        #qr-code {
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    
+    <input type="text" id="text-input" placeholder="Enter text">
+
+    <div id="qr-code"></div>
+
+    <button onclick="downloadQR('png')">Download PNG</button>
+    <button onclick="downloadQR('pdf')">Download PDF</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="https://cdn.rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <script>
+        function generateQRCode() {
+            var text = document.getElementById('text-input').value;
+
+            if (text.trim() !== "") {
+                var qrcode = new QRCode(document.getElementById("qr-code"), {
+                    text: text,
+                    width: 128,
+                    height: 128
+                });
+            }
+        }
+
+        function downloadQR(format) {
+            if ($('#qr-code canvas').length == 0) {
+                generateQRCode();
+            }
+
+            var canvas = $('#qr-code canvas')[0];
+
+            if (format === 'png') {
+                var dataURL = canvas.toDataURL('image/png');
+                var link = document.createElement('a');
+                link.href = dataURL;
+                link.download = 'qrcode.png';
+                link.click();
+            } else if (format === 'pdf') {
+                html2pdf().from(canvas).save('qrcode.pdf');
+            }
+        }
+    </script>
+</body>
+</html>
